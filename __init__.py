@@ -94,7 +94,7 @@ class FromUser:
 		self.username      = msg['username']
 		self.first_name    = msg['first_name']
 		self.last_name     = match_with_text('last_name', msg)
-		self.language_code = msg['language_code']
+		self.language_code = match_with_text('language_code', msg)
 		self.can_join_groups             = match_with_text("can_join_groups", msg)
 		self.supports_inline_queries     = match_with_text("supports_inline_queries", msg)
 		self.can_read_all_group_messages = match_with_text("can_read_all_group_messages", msg)
@@ -103,7 +103,7 @@ class Chat:
 	def __init__(self, msg):
 		self.id    				= msg['id']
 		self.msg 		  		= msg
-		self.types  			= msg['type']
+		self.type   			= msg['type']
 		self.title 				= match_with_text("title", msg)
 		self.photo 				= match_with_class('photo', msg, ChatPhoto)
 		self.username    		= match_with_text("username", msg)
@@ -119,6 +119,7 @@ class Chat:
 
 class MessageEntity:
 	def __init__(self, msg):
+		msg = msg[0]
 		self.msg    = msg
 		self.length = msg['length']
 		self.offset = msg['offset']
@@ -328,7 +329,7 @@ class Message:
 		self.caption 					= match_with_text('caption', msg)
 		self.contact 					= match_with_class('contact', msg, Contact)
 		self.invoice 					= match_with_class('invoice', msg, Invoice)
-		self.entities   				= MessageEntity(msg['entities'][0])
+		self.entities   				= match_with_class("entities",msg, MessageEntity)
 		self.document 					= match_with_class("document", msg, Document)
 		self.animation 					= match_with_class("animation", msg, Animation)
 		self.edit_date 					= match_with_text("edit_date", msg)
@@ -395,7 +396,7 @@ class CallbackQuery:
 		self.from_user 			= FromUser(msg['from'])
 		self.chat_instance  	= match_with_text('chat_instance',msg)
 		self.game_short_name   	= match_with_text('game_short_name', msg)
-		self.inline_message_id 	= msg['inline_message_id']
+		self.inline_message_id 	= match_with_text('inline_message_id', msg)
 
 class ChosenInlineResult:
 	def __init__(self, msg):
@@ -427,11 +428,12 @@ class Update:
 		self.pre_checkout_query 	= match_with_class('pre_checkout_query', msg, PreCheckoutQuery)
 		self.edited_channel_post	= match_with_class('edited_channel_post',msg, Message)
 		self.chosen_inline_result 	= match_with_class('chosen_inline_result', msg, ChosenInlineResult)
-		
+
 		if   self.poll is not None:
 			self.update_type = "poll"
 		elif self.message is not None:
 			self.update_type = "message"
+			self.helper = self.message.from_user.id, self.message.chat.id, self.message.chat.type
 		elif self.poll_answer is not None:
 			self.update_type = "poll_answer"
 		elif self.inline_query is not None:
