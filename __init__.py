@@ -427,3 +427,28 @@ class Update:
 		self.pre_checkout_query 	= match_with_class('pre_checkout_query', msg, PreCheckoutQuery)
 		self.edited_channel_post	= match_with_class('edited_channel_post',msg, Message)
 		self.chosen_inline_result 	= match_with_class('chosen_inline_result', msg, ChosenInlineResult)
+		
+		if   self.poll is not None:
+			self.update_type = "poll"
+		elif self.message is not None:
+			self.update_type = "message"
+		elif self.poll_answer is not None:
+			self.update_type = "poll_answer"
+		elif self.inline_query is not None:
+			self.update_type = "inline_query"
+		elif self.channel_post is not None:
+			self.update_type = "channel_post"
+		elif self.callback_query is not None:
+			self.update_type = "callback_query"
+		elif self.shipping_query is not None:
+			self.update_type = "shipping_query"
+		elif self.edited_message is not None:
+			self.update_type = "edited_message"
+		elif self.pre_checkout_query is not None:
+			self.update_type = "pre_checkout_query"
+		elif self.edited_channel_post is not None:
+			self.update_type = "edited_channel_post"
+		elif self.chosen_inline_result is not None:
+			self.update_type = "chosen_inline_result"
+		else:
+			self.update_type = "Unknow"
