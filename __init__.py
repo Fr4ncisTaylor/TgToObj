@@ -249,10 +249,10 @@ class PollOptions:
 		self.text 					= msg['text']
 		self.type 					= msg['type']
 		self.is_closed 				= msg['is_closed']
-		self.is_anonymous	 		= msg['is_anonymous']
 		self.explanation 			= match_with_text('explanation', msg)
 		self.open_period 			= match_with_text('open_period', msg)
 		self.voter_count 			= msg['voter_count']
+		self.is_anonymous	 		= msg['is_anonymous']
 		self.correct_option_id 		= match_with_text('correct_option_id', msg)
 		self.total_voters_count 	= msg['total_voters_count']
 		self.explanation_entities 	= match_with_class("explanation_entities", msg, MessageEntity)
@@ -311,9 +311,9 @@ class Message:
 		self.dice 						= match_with_class('dice', msg, Dice)
 		self.game 						= match_with_class('game', msg, Game)
 		self.poll 						= match_with_class('poll', msg, Poll)
-		self.text		 		        = msg['text']
-		self.chat 						= Chat(msg['chat'])
-		self.date 						= msg['date']
+		self.text		 		        = match_with_text('text', msg)
+		self.chat 						= match_with_class('chat', msg, Chat)
+		self.date 						= match_with_text('date', msg)
 		self.venue 						= match_with_class('venue', msg, Venue)
 		self.audio 						= match_with_class("audio", msg, Audio)
 		self.photo 						= match_with_class('photo', msg, PhotoSize)
@@ -328,7 +328,7 @@ class Message:
 		self.document 					= match_with_class("document", msg, Document)
 		self.animation 					= match_with_class("animation", msg, Animation)
 		self.edit_date 					= match_with_text("edit_date", msg)
-		self.from_user 			 		= FromUser(msg['from'])
+		self.from_user 			 		= match_with_class('from', msg, FromUser)
 		self.video_note 				= match_with_class('video_note', msg, VideoNote)
 		self.message_id 				= msg['message_id']
 		self.forward_from      			= match_with_class("forward_from", msg, FromUser)
