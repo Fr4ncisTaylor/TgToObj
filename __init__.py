@@ -1,15 +1,7 @@
+from .helper import match_with_text, match_with_class
 
 __version__ = "1.0"
 __api__     = "4.9"
-
-
-def match_with_text(arg, msg):
-	if arg in msg:return msg[arg]
-	else:return None
-
-def match_with_class(arg, msg, classe):
-	if arg in msg:return classe(msg[arg])
-	else:return None
 
 class Contact:
 	def __init__(self, msg):
@@ -18,11 +10,13 @@ class Contact:
 		self.last_name    = match_with_text('last_name', msg)
 		self.user_id      = match_with_text('user_id', msg)
 		self.vcard        = match_with_text('vcard', msg)
+		self.msg          = msg
 
 class Location:
 	def __init__(self, msg):
 		self.longitude = msg['longitude']
 		self.latitude  = msg['latitude']
+		self.msg       = msg
 
 class Voice:
 	def __init__(self, msg):
@@ -50,6 +44,7 @@ class UserProfilePhotos:
 
 class File:
 	def __init__(self, msg):
+		self.msg            = msg
 		self.file_id        = msg['file_id']
 		self.file_size      = msg['file_size']
 		self.file_path      = msg['file_path']
@@ -155,6 +150,7 @@ class Animation:
 
 class PhotoSize:
 	def __init__(self, msg):
+		self.msg            = msg
 		self.width     		= msg['width']
 		self.height    		= msg['height']
 		self.file_id   		= msg['file_id']
@@ -175,61 +171,61 @@ class Audio:
 
 class VideoNote:
 	def __init__(self, msg):
-		self.msg = msg
-		self.file_id        = msg['file_id']
-		self.file_unique_id = msg['file_unique_id']
-		self.length         = msg['length']
-		self.duration      = match_with_text('duration', msg)
-		self.file_size      = match_with_text('file_size', msg)
+		self.msg            = msg
 		self.thumb          = match_with_class('thumb', msg, PhotoSize)
+		self.length         = msg['length']
+		self.file_id        = msg['file_id']
+		self.duration       = match_with_text('duration', msg)
+		self.file_size      = match_with_text('file_size', msg)
+		self.file_unique_id = msg['file_unique_id']
 
 class Video:
 	def __init__(self, msg):
-		self.msg = msg
+		self.msg            = msg
+		self.thumb          = match_with_class('thumb', msg, PhotoSize)
+		self.width          = match_with_text('width', msg)
+		self.height         = match_with_text('height', msg)
 		self.file_id        = msg['file_id']
-		self.file_unique_id = msg['file_unique_id']
 		self.duration       = msg['duration']
 		self.mime_type      = match_with_text('mime_type', msg)
 		self.file_size      = match_with_text('file_size', msg)
-		self.thumb          = match_with_class('thumb', msg, PhotoSize)
-		self.height         = match_with_text('height', msg)
-		self.width          = match_with_text('width', msg)
+		self.file_unique_id = msg['file_unique_id']
 
 class Document:
 	def __init__(self, msg):
-		self.msg = msg
+		self.msg            = msg
+		self.thumb          = match_with_class('thumb', msg, PhotoSize)
 		self.file_id        = msg['file_id']
-		self.file_unique_id = msg['file_unique_id']
 		self.file_name      = msg['file_name']
 		self.mime_type      = match_with_text('mime_type', msg)
 		self.file_size      = match_with_text('file_size', msg)
-		self.thumb          = match_with_class('thumb', msg, PhotoSize)
+		self.file_unique_id = msg['file_unique_id']
 
 class MaskPosition:
 	def __init__(self, msg):
 		self.msg     = msg
 		self.point   = msg['point']
+		self.scale   = msg['scale']
 		self.x_shift = msg['x_shift']
 		self.y_shift = msg['y_shift']
-		self.scale   = msg['scale']
 
 class Sticker:
 	def __init__(self, msg):
 		self.msg            = msg
-		self.width     		= msg['width']
-		self.height    		= msg['height']
 		self.emoji          = msg['emoji']
-		self.set_name       = match_with_text("set_name", msg)
-		self.mask_position  = match_with_class('mask_position', msg, MaskPosition)
+		self.width     		= msg['width']
+		self.title          = msg['title']
+		self.thumb          = match_with_class('thumb', msg, PhotoSize)
+		self.height    		= msg['height']
 		self.file_id        = msg['file_id']
-		self.is_animated    = msg['is_animated']
-		self.file_unique_id = msg['file_unique_id']
 		self.duration       = msg['duration']
 		self.performer      = msg['performer']
-		self.title          = msg['title']
+		self.set_name       = match_with_text("set_name", msg)
 		self.mime_type      = match_with_text('mime_type', msg)
 		self.file_size      = match_with_text('file_size', msg)
-		self.thumb          = match_with_class('thumb', msg, PhotoSize)
+		self.is_animated    = msg['is_animated']
+		self.mask_position  = match_with_class('mask_position', msg, MaskPosition)
+		self.file_unique_id = msg['file_unique_id']
 
 class Dice:
 	def __init__(self, msg):
@@ -311,7 +307,6 @@ class Message:
 			self.reply_to_message  = match_with_class("reply_to_message", msg, Message)
 		else:
 			self.reply_to_message 		= None
-		
 		self.msg 		 				= msg
 		self.dice 						= match_with_class('dice', msg, Dice)
 		self.game 						= match_with_class('game', msg, Game)
@@ -413,13 +408,13 @@ class PollAnswer:
 		self.poll_id 	= msg['poll_id']
 		self.option_ids	= msg['option_ids']
 
-class Update:
+class Make:
 	def __init__(self, msg):
 		self.msg       				= msg
 		self.poll 					= match_with_class('poll', msg, Poll)
 		self.message   				= match_with_class('message', msg, Message)
-		self.poll_answer 			= match_with_class('poll_answer', msg, PollAnswer)
 		self.update_id 				= msg['update_id']
+		self.poll_answer 			= match_with_class('poll_answer', msg, PollAnswer)
 		self.inline_query 			= match_with_class('inline_query', msg, InlineQuery)
 		self.channel_post   		= match_with_class('channel_post', msg, Message)
 		self.callback_query 		= match_with_class('callback_query', msg, CallbackQuery)
